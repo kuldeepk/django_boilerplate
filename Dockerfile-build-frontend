@@ -1,0 +1,4 @@
+FROM node:11
+
+WORKDIR /code
+CMD yarn && npm rebuild node-sass && yarn run build --watch

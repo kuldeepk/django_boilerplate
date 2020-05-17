@@ -1,0 +1,90 @@
+version: '3'
+
+services:
+  # mysql:
+  #   image: mysql:8.0.16
+  #   restart: always
+  #   environment:
+  #     - MYSQL_USER=user
+  #     - MYSQL_DATABASE=sliver_main
+  #     - MYSQL_PASSWORD=password
+  #     - MYSQL_ROOT_PASSWORD=password
+  #   ports:
+  #     - '3306:3306'
+  #   expose:
+  #     - '3306'
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   volumes:
+  #     - mysql_data_vol:/var/lib/mysql
+
+  postgres:
+    restart: always
+    image: postgres:11
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=project_main
+
+  redis:
+    restart: always
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+  web:
+    build: .
+    image: 'project_web'
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8001"
+    volumes:
+      - .:/code
+      - node_modules:/code/node_modules
+      - ~/.config/:/root/.config
+    ports:
+      - "8001:8001"
+    depends_on:
+      # - mysql
+      - postgres
+      - redis
+    environment:
+      PROJECT_DB: 'project_main'
+      PROJECT_DB_USER: 'user'
+      PROJECT_DB_PASSWORD: 'password'
+      # MYSQL_HOST: mysql
+      # MYSQL_PORT: 3306
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      GOOGLE_APPLICATION_CREDENTIALS: '/root/.config/gcloud/application_default_credentials.json'
+
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile-build-frontend
+    image: 'project_build_frontend'
+    command: >
+        bash -c "yarn
+        && npm rebuild node-sass
+        && yarn run build --watch"
+    volumes:
+      - .:/code
+      - node_modules:/code/node_modules
+      - ~/.config/:/root/.config
+
+volumes:
+  # mysql_data_vol:
+  #   driver: local
+  node_modules:
+    driver: local
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local

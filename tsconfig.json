@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "moduleResolution": "node",
+        "module": "esNext",
+        "target": "ES2015",
+        "lib": ["es2015", "es2016", "es2017", "dom", "esnext.asynciterable"],
+        "strict": false,
+        "sourceMap": true,
+        "declaration": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "outDir": "static/webpack_bundles/",
+        "esModuleInterop": true,
+        "jsx": "react"
+    },
+    "include": ["frontend"],
+    "typeRoots": ["./frontend/typings"]
+}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% load render_bundle from webpack_loader %}
+
+{% block content %}
+<!-- <script type="text/javascript">
+        {# Seed current user info so that we don't have to make an additional client side request for this #}
+        var __CONTEXT__ = {{ preloaded_data | safe }}
+</script> -->
+
+{# Root node for React - Don't delete #}
+<div id="root">
+</div>
+
+{# Webpack assets are injected here #}
+{% render_bundle 'main' %}
+
+{% endblock %}

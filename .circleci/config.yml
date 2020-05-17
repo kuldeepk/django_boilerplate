@@ -1,0 +1,154 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.7.6
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      - run:
+          name: install global dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install build-essential libssl-dev libffi-dev python-dev
+            sudo pip install virtualenv
+      - run:
+          name: install django dependencies
+          command: |
+            virtualenv -p python venv
+            . venv/bin/activate
+            python --version
+            pip install setuptools==40.3.0
+            pip install -r requirements.txt
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "requirements.txt" }}
+      # - run:
+      #     name: Running tests
+      #     command: |
+      #       cp config/stage/secrets.yml.enc .
+      #       echo $<PROJECT_DEPLOYMENT_KEY> | base64 --decode --ignore-garbage > master.key
+      #       . venv/bin/activate
+      #       make test
+  stage-deploy:
+    docker:
+      - image: circleci/python:3.7.6
+    steps:
+      - checkout
+      - run:
+          name: install yarn and sync static
+          command: |
+            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+            sudo apt install nodejs
+            npm --version
+            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt update && sudo apt install yarn
+            yarn --version
+            npm install --save-dev webpack
+            yarn add webpack-cli --dev
+            yarn run build:stage
+      - restore_cache:
+          key: v1-project-{{ checksum ".circleci/stage-gcloud.sh" }}
+      - run:
+          name: install GCloud SDK
+          command: |
+            /bin/bash .circleci/stage-gcloud.sh
+      - run:
+          name: deploy static
+          command: |
+            $HOME/google-cloud-sdk/bin/gsutil -m cp -R static/ gs://<GOOGLE-STORAGE-URL>
+      - run:
+          name: deploy app
+          command: |
+            rm Dockerfile
+            cp config/stage/app.yaml .
+            cp config/stage/secrets.yml.enc .
+            echo $<PROJECT_DEPLOYMENT_KEY> | base64 --decode --ignore-garbage > master.key
+            $HOME/google-cloud-sdk/bin/gcloud config set app/cloud_build_timeout 2000
+            $HOME/google-cloud-sdk/bin/gcloud app deploy --promote
+          no_output_timeout: 20m
+      - save_cache:
+          key: v1-project-{{ checksum ".circleci/stage-gcloud.sh" }}
+          paths:
+            - ~/google-cloud-sdk
+
+  prod-deploy:
+    docker:
+      - image: circleci/python:3.7.6
+    steps:
+      - checkout
+      - run:
+          name: install yarn and sync static
+          command: |
+            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+            sudo apt install nodejs
+            npm --version
+            curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+            echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
+            sudo apt update && sudo apt install yarn
+            yarn --version
+            npm install --save-dev webpack
+            yarn add webpack-cli --dev
+            yarn run build:prod
+      - restore_cache:
+          key: v1-project-{{ checksum ".circleci/prod-gcloud.sh" }}
+      - run:
+          name: install GCloud SDK
+          command: |
+            /bin/bash .circleci/prod-gcloud.sh
+      - run:
+          name: deploy static
+          command: |
+            $HOME/prod/google-cloud-sdk/bin/gsutil -m cp -R static/ gs://<GOOGLE-STORAGE-URL>
+      - run:
+          name: deploy app
+          command: |
+            rm Dockerfile
+            cp config/prod/app.yaml .
+            cp config/prod/secrets.yml.enc .
+            echo $<PROJECT_DEPLOYMENT_KEY_PROD> | base64 --decode --ignore-garbage > master.key
+            $HOME/prod/google-cloud-sdk/bin/gcloud config set app/cloud_build_timeout 1200
+            $HOME/prod/google-cloud-sdk/bin/gcloud app deploy --no-promote
+      - save_cache:
+          key: v1-project-{{ checksum ".circleci/prod-gcloud.sh" }}
+          paths:
+            - ~/google-cloud-sdk
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build
+
+  build-and-deploy:
+    jobs:
+      - build:
+          filters:
+            tags:
+              only:
+                - /^release-.*/
+            branches:
+              only:
+                - master
+                - develop
+      - stage-deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+      - prod-deploy:
+          requires:
+            - build
+          filters:
+            tags:
+              only:
+                - /^release-.*/
+            branches:
+              ignore: /.*/
+
