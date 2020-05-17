@@ -12,7 +12,7 @@ Spin up base applications from this
 
 ## Installation
 
-1. `git clone <repository-url>`
+1. `git clone git@github.com:kuldeepk/django_boilerplate.git`
 2. `cd django_boilerplate`
 3. `docker-compose build`
 
