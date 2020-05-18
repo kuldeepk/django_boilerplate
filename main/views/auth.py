@@ -36,6 +36,15 @@ from django.conf import settings
 #TODO: penalize on password retry attempts
 
 def get_user_context(user):
+    if user:
+        return {
+            "user": {
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+            }
+        }
     return {}
 
 
@@ -102,9 +111,7 @@ class LoginView(APIMixin):
                         device = TOTPDevice.objects.get(user=user)
                         if device.verify_token(code):
                             login(request, user)
-                            response = JsonResponse(get_user_context(user,
-                                ip=self.get_client_ip(),
-                                fingerprint=self.get_device_fingerprint()))
+                            response = JsonResponse(get_user_context(user))
                             if form.cleaned_data["remember"]:
                                 response.set_cookie('remember', 'true', max_age=(30 * 24 * 60 * 60))
                             return response
@@ -112,51 +119,47 @@ class LoginView(APIMixin):
                         device = PhoneDevice.objects.get(user=user)
                         if device.verify_token(code):
                             login(request, user)
-                            response = JsonResponse(get_user_context(user,
-                                ip=self.get_client_ip(),
-                                fingerprint=self.get_device_fingerprint()))
+                            response = JsonResponse(get_user_context(user))
                             if form.cleaned_data["remember"]:
                                 response.set_cookie('remember', 'true', max_age=(30 * 24 * 60 * 60))
                             return response
                     return self.error_response(general_errors=["Invalid token. Please try again."])
                 else:
                     # TODO: bad practice. store a token instead
-                    if request.COOKIES.get('remember') == 'true':
-                        login(request, user)
-                        return JsonResponse(get_user_context(user,
-                                ip=self.get_client_ip(),
-                                fingerprint=self.get_device_fingerprint()))
+                    #if request.COOKIES.get('remember') == 'true':
+                    login(request, user)
+                    return JsonResponse(get_user_context(user))
+                    # end if
 
-                    response_data = {
-                        'devices': {
-                            'authenticator': False,
-                            'sms': False,
-                            'email': False
-                        }
-                    }
-                    devices = django_otp.devices_for_user(user, confirmed=True)
-                    mobile_device = None
-                    for device in devices:
-                        if isinstance(device, TOTPDevice):
-                            response_data['devices']['authenticator'] = True
-                        elif isinstance(device, PhoneDevice):
-                            response_data['devices']['sms'] = True
-                            mobile_device = device
-                            device_number = str(device.number)
-                            device_number = device_number[:-10] + '(###) ### - ##' + device_number[-2:]
-                            response_data['devices']['mobile'] = device_number
-                    if device_type == 'sms' or \
-                        (response_data['devices']['sms'] and \
-                            not response_data['devices']['authenticator']):
-                        #TODO: send an email when backup device is used.
-                        mobile_device.generate_challenge()
-                    if not response_data['devices']['sms'] and \
-                            not response_data['devices']['authenticator']:
-                        login(request, user)
-                        return JsonResponse(get_user_context(user,
-                                ip=self.get_client_ip(),
-                                fingerprint=self.get_device_fingerprint()))
-                    return self.success_response(result=response_data)
+                    # Uncomment to add 2FA
+                    # response_data = {
+                    #     'devices': {
+                    #         'authenticator': False,
+                    #         'sms': False,
+                    #         'email': False
+                    #     }
+                    # }
+                    # devices = django_otp.devices_for_user(user, confirmed=True)
+                    # mobile_device = None
+                    # for device in devices:
+                    #     if isinstance(device, TOTPDevice):
+                    #         response_data['devices']['authenticator'] = True
+                    #     elif isinstance(device, PhoneDevice):
+                    #         response_data['devices']['sms'] = True
+                    #         mobile_device = device
+                    #         device_number = str(device.number)
+                    #         device_number = device_number[:-10] + '(###) ### - ##' + device_number[-2:]
+                    #         response_data['devices']['mobile'] = device_number
+                    # if device_type == 'sms' or \
+                    #     (response_data['devices']['sms'] and \
+                    #         not response_data['devices']['authenticator']):
+                    #     #TODO: send an email when backup device is used.
+                    #     mobile_device.generate_challenge()
+                    # if not response_data['devices']['sms'] and \
+                    #         not response_data['devices']['authenticator']:
+                    #     login(request, user)
+                    #     return JsonResponse(get_user_context(user))
+                    # return self.success_response(result=response_data)
 
         return self.error_response(general_errors=["Invalid email or password."])
 

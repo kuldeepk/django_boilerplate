@@ -11,35 +11,26 @@ import {
   Modal,
   Button
 } from "react-bootstrap";
-//import { AppStateContainer } from "./AppState";
+import { AppStateContainer } from "./AppState";
 import { navigate } from "hookrouter";
 import { isEmpty } from "lodash";
 
 export const events = new EventEmitter();
 
 export const GlobalLayout = (props: { children: any }) => {
-  //const { user } = AppStateContainer.useContainer();
+  const { user } = AppStateContainer.useContainer();
   let appEnv = 'landing-page';
-  // if (user){
-  //   appEnv = 'console';
-  //   if (isEmpty(user.application_status) || !user.application_status.did_application_approve) {
-  //     appEnv = 'onboarding';
-  //   }
-  // }
+  if (user){
+    appEnv = 'console';
+  }
   
   return (
     <div id={appEnv}>
       { appEnv == 'console' ? 
         (
-          <></>
+          <ConsoleNav></ConsoleNav>
         ) : ( <>
-          { appEnv == 'onboarding' ? 
-            (
-              <OnboardingNav></OnboardingNav>
-            ) : ( 
-              <LandingNav></LandingNav>
-            )
-          }
+          <LandingNav></LandingNav>
           </>
         )
       }
@@ -70,6 +61,7 @@ export const GlobalLayout = (props: { children: any }) => {
 };
 
 export const LandingNav = () => {
+  const context = AppStateContainer.useContainer();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -82,7 +74,8 @@ export const LandingNav = () => {
   }
 
   useEffect(() => {
-      events.on('OpenWaitlistBox', handleShow);
+    console.log(context);
+    events.on('OpenWaitlistBox', handleShow);
   }); 
 
   return (
@@ -92,16 +85,7 @@ export const LandingNav = () => {
         <Navbar.Brand href="/" id="logo">
           <span className="hidden-folded d-inline l-s-n-1x ">Project</span>
         </Navbar.Brand>
-        {/*<div className="justify-content-end d-flex" style={{ flexGrow: 1 }}>
-          <Nav
-            defaultActiveKey=""
-            onSelect={(key: string) => navigate(`/${key}`)}
-          >
-            <Nav.Link href="/signup">Signup</Nav.Link>
-            <Nav.Link href="/login">Login</Nav.Link>
-            <a className="btn btn-primary" onClick={handleShow} href="#">Get a Demo</a>
-          </Nav>
-        </div>*/}
+
         <div className="collapse navbar-collapse order-2 order-lg-1" id="navbarToggler">
           <Nav
             defaultActiveKey=""
@@ -132,14 +116,28 @@ export const LandingNav = () => {
 }
 
 export const ConsoleNav = () => (
-  <Navbar className="navbar-top justify-content-end" expand="lg">
-    <Navbar.Brand href="/" id="logo"></Navbar.Brand>
-    <Navbar.Collapse className="justify-content-end">
-      <Nav>
-        <Nav.Link href="/logout/">Logout</Nav.Link>
-      </Nav>
-  </Navbar.Collapse>
-  </Navbar>
+  <header id="header" className="page-header p-2 bg-white sticky" data-class="bg-white">
+    <Navbar className="navbar-top" expand="lg">
+      <Navbar.Brand href="/" id="logo">
+        <span className="hidden-folded d-inline l-s-n-1x ">Project</span>
+      </Navbar.Brand>
+      <div className="collapse navbar-collapse order-2 order-lg-1" id="navbarToggler">
+        <Nav
+          defaultActiveKey=""
+          className="ml-auto pr-3"
+        >
+          <Nav.Link href="/logout">Logout</Nav.Link>
+        </Nav>
+      </div>
+      <ul className="nav navbar-menu order-1 order-lg-2">
+        <li className="nav-item d-lg-none">
+          <a href="#" className="nav-link i-con-h-a px-1" data-toggle="collapse" data-toggle-class="" data-target="#navbarToggler" data-pjax-state="">
+            <i className="i-con i-con-nav text-muted"><i></i></i>
+          </a>
+        </li>
+      </ul>
+    </Navebar>
+  </header>
 )
 
 export const OnboardingNav = () => (

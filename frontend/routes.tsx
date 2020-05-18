@@ -10,4 +10,5 @@ export const routes = {
 	"/": () => <Home />,
 	"/login": () => <Login />,
 	"/signup": () => <Signup />,
+	"/dashboard": () => <Home />,
 };
