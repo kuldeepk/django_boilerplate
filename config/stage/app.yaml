@@ -31,7 +31,7 @@ automatic_scaling:
     target_utilization: 0.5
 
 readiness_check:
-  path: "/api/status/"
+  path: "/api/status"
   check_interval_sec: 120
   timeout_sec: 5
   failure_threshold: 5
