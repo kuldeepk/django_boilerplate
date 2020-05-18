@@ -136,7 +136,7 @@ export const ConsoleNav = () => (
           </a>
         </li>
       </ul>
-    </Navebar>
+    </Navbar>
   </header>
 )
 
