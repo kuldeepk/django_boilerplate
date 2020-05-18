@@ -5,7 +5,7 @@ from main.views import (
 )
 
 urlpatterns = [
-    path('api/status', auth.StatusView.as_view(), name='status'),
+    path('api/status/', auth.StatusView.as_view(), name='status'),
 
     re_path(r'^((?!(admin|api)).)*$', root.RootView.as_view(), name='root'),
 ]
