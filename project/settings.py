@@ -133,7 +133,7 @@ if IS_STAGE:
             'HOST': '/cloudsql/district-stage:us-central1:district-main'
         }
     }
-if IS_STAGE_PROXY:
+elif IS_STAGE_PROXY:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -156,6 +156,7 @@ else:
         }
     }
 
+# Redis
 if IS_LOCAL:
     REDIS_LOCATION = "redis://redis:6379/0"
     CACHES = {
