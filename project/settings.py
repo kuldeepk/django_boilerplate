@@ -26,10 +26,10 @@ IS_LOCAL = False
 IS_DEPLOY_WORKER = os.environ.get('CIRCLECI', False) == 'true'
 
 
-if os.environ.get('GCLOUD_PROJECT') == 'district-so':
-    IS_PROD = True
-elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
-    IS_STAGE = True
+# if os.environ.get('GCLOUD_PROJECT') == 'district-so':
+#     IS_PROD = True
+# elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
+#     IS_STAGE = True
 
 if os.environ.get('GCP_PROD_WORKER', False) == 'true':
     IS_PROD = True
@@ -133,7 +133,7 @@ if IS_STAGE:
             'HOST': '/cloudsql/district-stage:us-central1:district-main'
         }
     }
-elif IS_STAGE_PROXY:
+if IS_STAGE_PROXY:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -217,15 +217,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-if IS_PROD:
-    STATIC_URL = 'https://cdn.getsliver.com/static/'
-elif IS_STAGE:
-    STATIC_URL = 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
-else:
-    STATIC_URL = '/static/'
+# if IS_PROD:
+#     STATIC_URL = 'https://cdn.getsliver.com/static/'
+# elif IS_STAGE:
+#     STATIC_URL = 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
+# else:
+#     STATIC_URL = '/static/'
 
-if IS_DEPLOY_WORKER:
-    STATIC_ROOT = 'static'
+# if IS_DEPLOY_WORKER:
+STATIC_ROOT = 'static'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
