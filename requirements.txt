@@ -11,3 +11,5 @@ django-encrypted-secrets==0.9.8
 django-two-factor-auth==1.8.0
 django_otp==0.7.5
 twilio==6.33.1
+gunicorn==19.9.0
+google-cloud-bigquery==1.23.1
