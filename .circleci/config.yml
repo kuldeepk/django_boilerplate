@@ -56,10 +56,10 @@ jobs:
           name: install GCloud SDK
           command: |
             /bin/bash .circleci/stage-gcloud.sh
-      - run:
-          name: deploy static
-          command: |
-            $HOME/google-cloud-sdk/bin/gsutil -m cp -R static/ gs://<GOOGLE-STORAGE-URL>
+      # - run:
+      #     name: deploy static
+      #     command: |
+      #       $HOME/google-cloud-sdk/bin/gsutil -m cp -R static/ gs://<GOOGLE-STORAGE-URL>
       - run:
           name: deploy app
           command: |
