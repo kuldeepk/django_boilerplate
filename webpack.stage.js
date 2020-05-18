@@ -25,7 +25,7 @@ module.exports = merge(common, {
 		path: path.resolve("./static/webpack_bundles/"),
 		filename: "[name]-[hash].js",
 		chunkFilename: '[name].chunk.js',
-		publicPath: 'https://storage.googleapis.com/sliver-stage-static/static/webpack_bundles/'
+		publicPath: 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
 	},
 	optimization: {
 		minimize: true,
