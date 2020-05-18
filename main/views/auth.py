@@ -60,8 +60,8 @@ class StatusView(APIMixin):
 
         redis_connection = False
         try:
-        	from django_redis import get_redis_connection
-        	redis_con = get_redis_connection("default")
+            from django_redis import get_redis_connection
+            redis_con = get_redis_connection("default")
             redis_con.ping()
             redis_connection = True
         except redis.exceptions.ConnectionError as r_con_error:
