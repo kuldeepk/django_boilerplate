@@ -6,7 +6,7 @@ runtime_config:
 entrypoint: gunicorn -b :$PORT project.wsgi
 
 beta_settings:
-  cloud_sql_instances: "ace-momentum-248417:us-central1:sliver-mysql"
+  cloud_sql_instances: "district-stage:us-central1:district-main"
 
 env_variables:
   GCP_STAGE: "true"
