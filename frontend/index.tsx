@@ -1,3 +1,5 @@
+import "bootstrap/dist/css/bootstrap.css";
+import "./styles/theme.scss";
 import "./styles/style.scss";
 import "./styles/main.scss";
 

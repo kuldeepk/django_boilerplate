@@ -1,0 +1,65 @@
+a {
+	color: #eb9904;
+}
+
+a:hover {
+	color: #212529 !important;
+}
+
+.btn-primary {
+	// background-color: #eb9904;
+	// border-color: #eb9904;
+	color: #212529;
+	background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.btn-primary:hover {
+	color: #212529;
+    background-color: #e0a800;
+    border-color: #d39e00;
+}
+
+.btn-blue {
+	color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-blue:hover {
+	color: #fff;
+    background-color: #0069d9;
+    border-color: #0062cc;
+}
+
+a.navbar-brand {
+	margin-right: 0.5rem;
+	color: #eb9904;
+
+	.fill {
+		fill:#a9a9a9;
+	}
+	span {
+		font-family: 'Open Sans', sans-serif;
+	    letter-spacing: 0;
+	}
+}
+
+a.navbar-brand:hover {
+	color: #212529 !important;
+}
+
+a.sub-district {
+	color: #647787;
+}
+
+.hero {
+	h1 {
+		line-height: 1.5;
+	}
+}
+
+i.hero.fas {
+	font-size: 112px;
+	color: #eb9904;
+}
