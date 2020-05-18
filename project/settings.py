@@ -83,6 +83,10 @@ INSTALLED_APPS = [
     'sass_processor',
     'webpack_loader',
     'encrypted_secrets',
+    'django_otp',
+    'django_otp.plugins.otp_static',
+    'django_otp.plugins.otp_totp',
+    'two_factor',
 ]
 
 MIDDLEWARE = [
@@ -119,16 +123,38 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('PROJECT_DB', 'project_main'),
-        'USER': os.environ.get('PROJECT_DB_USER', 'user'),
-        'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
-        'HOST': 'postgres',
-        'PORT': 5432,
+if IS_STAGE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'district_main',
+            'USER': 'postgres',
+            'PASSWORD': get_secret('postgres', {}).get('password'),
+            'HOST': '/cloudsql/district-stage:us-central1:district-main'
+        }
     }
-}
+if IS_STAGE_PROXY:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'district_main',
+            'USER': 'postgres',
+            'PASSWORD': get_secret('postgres', {}).get('password'),
+            'HOST': '127.0.0.1',
+            'PORT': '3311'
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('PROJECT_DB', 'project_main'),
+            'USER': os.environ.get('PROJECT_DB_USER', 'user'),
+            'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
+            'HOST': 'postgres',
+            'PORT': 5432,
+        }
+    }
 
 if IS_LOCAL:
     REDIS_LOCATION = "redis://redis:6379/0"

@@ -8,3 +8,6 @@ django-fakeredis==0.1.1
 https://github.com/darklow/django-suit/tarball/v2
 requests==2.22.0
 django-encrypted-secrets==0.9.8
+django-two-factor-auth==1.8.0
+django_otp==0.7.5
+twilio==6.33.1
