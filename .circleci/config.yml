@@ -66,7 +66,7 @@ jobs:
             rm Dockerfile
             cp config/stage/app.yaml .
             cp config/stage/secrets.yml.enc .
-            echo $<PROJECT_DEPLOYMENT_KEY> | base64 --decode --ignore-garbage > master.key
+            echo $DISTRICT_DEPLOYMENT_KEY | base64 --decode --ignore-garbage > master.key
             $HOME/google-cloud-sdk/bin/gcloud config set app/cloud_build_timeout 2000
             $HOME/google-cloud-sdk/bin/gcloud app deploy --promote
           no_output_timeout: 20m
