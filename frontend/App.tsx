@@ -1,5 +1,5 @@
 import React from "react";
-//import { AppStateContainer } from "./AppState";
+import { AppStateContainer } from "./AppState";
 import { NotificationsContainer, Notifications } from "./helpers/Notifications";
 import { routes } from "./routes";
 import { useRoutes } from "hookrouter";
@@ -16,16 +16,18 @@ export const App = () => {
   //Mixpanel.track(path);
   return (
     <>
-      <NotificationsContainer.Provider>
-        <GlobalLayout>
-          {currentRoute || (
-            <>
-              {/* TODO: Replace with a better 404 page */}
-              <div>You seem to be lost</div>
-            </>
-          )}
-        </GlobalLayout>
-      </NotificationsContainer.Provider>
+      <AppStateContainer.Provider>
+        <NotificationsContainer.Provider>
+          <GlobalLayout>
+            {currentRoute || (
+              <>
+                {/* TODO: Replace with a better 404 page */}
+                <div>You seem to be lost</div>
+              </>
+            )}
+          </GlobalLayout>
+        </NotificationsContainer.Provider>
+      </AppStateContainer.Provider>
     </>
   );
 };
