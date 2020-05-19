@@ -219,12 +219,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-# if IS_PROD:
-#     STATIC_URL = 'https://cdn.getsliver.com/static/'
-# elif IS_STAGE:
-#     STATIC_URL = 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
-# else:
-STATIC_URL = '/static/'
+if IS_PROD:
+    STATIC_URL = 'https://cdn.getsliver.com/static/'
+elif IS_STAGE:
+    STATIC_URL = 'https://storage.googleapis.com/district-stage-static/static/'
+else:
+    STATIC_URL = '/static/'
 
 if IS_DEPLOY_WORKER:
     STATIC_ROOT = 'static'
