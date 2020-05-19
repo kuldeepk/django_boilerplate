@@ -125,38 +125,38 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# if IS_STAGE:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': 'district_main',
-#             'USER': 'postgres',
-#             'PASSWORD': get_secret('postgres', {}).get('password'),
-#             'HOST': '/cloudsql/district-stage:us-central1:district-main'
-#         }
-#     }
-# elif IS_STAGE_PROXY:
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.postgresql',
-#             'NAME': 'district_main',
-#             'USER': 'postgres',
-#             'PASSWORD': get_secret('postgres', {}).get('password'),
-#             'HOST': '127.0.0.1',
-#             'PORT': '3311'
-#         }
-#     }
-# else:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('PROJECT_DB', 'project_main'),
-        'USER': os.environ.get('PROJECT_DB_USER', 'user'),
-        'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
-        'HOST': 'postgres',
-        'PORT': 5432,
+if IS_STAGE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'district_main',
+            'USER': 'postgres',
+            'PASSWORD': get_secret('postgres', {}).get('password'),
+            'HOST': '/cloudsql/district-stage:us-central1:district-main'
+        }
     }
-}
+elif IS_STAGE_PROXY:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'district_main',
+            'USER': 'postgres',
+            'PASSWORD': get_secret('postgres', {}).get('password'),
+            'HOST': '127.0.0.1',
+            'PORT': '3311'
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('PROJECT_DB', 'project_main'),
+            'USER': os.environ.get('PROJECT_DB_USER', 'user'),
+            'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
+            'HOST': 'postgres',
+            'PORT': 5432,
+        }
+    }
 
 # Redis
 if IS_LOCAL:
@@ -219,12 +219,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-if IS_PROD:
-    STATIC_URL = 'https://cdn.getsliver.com/static/'
-elif IS_STAGE:
-    STATIC_URL = 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
-else:
-    STATIC_URL = '/static/'
+# if IS_PROD:
+#     STATIC_URL = 'https://cdn.getsliver.com/static/'
+# elif IS_STAGE:
+#     STATIC_URL = 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
+# else:
+STATIC_URL = '/static/'
 
 if IS_DEPLOY_WORKER:
     STATIC_ROOT = 'static'
