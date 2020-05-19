@@ -25,7 +25,7 @@ module.exports = merge(common, {
 		path: path.resolve("./static/webpack_bundles/"),
 		filename: "[name]-[hash].js",
 		chunkFilename: '[name].chunk.js',
-		publicPath: 'https://console.cloud.google.com/storage/browser/district-stage-static/static/'
+		publicPath: 'https://storage.googleapis.com/district-stage-static/static/webpack_bundles/'
 	},
 	optimization: {
 		minimize: true,
