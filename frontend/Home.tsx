@@ -68,6 +68,7 @@ export const WaitlistFormPresenter = (
         <Form onSubmit={formProps.handleSubmit} style={{ margin: "10px 0" }}>
           <InputGroup size="lg">
             <FormControl
+              autoFocus
               placeholder="Email address"
               name="email"
               type="email"

@@ -26,10 +26,10 @@ IS_LOCAL = False
 IS_DEPLOY_WORKER = os.environ.get('CIRCLECI', False) == 'true'
 
 
-# if os.environ.get('GCLOUD_PROJECT') == 'district-so':
-#     IS_PROD = True
-# elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
-#     IS_STAGE = True
+if os.environ.get('GCLOUD_PROJECT') == 'district-so':
+    IS_PROD = True
+elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
+    IS_STAGE = True
 
 if os.environ.get('GCP_PROD_WORKER', False) == 'true':
     IS_PROD = True
@@ -135,7 +135,7 @@ if IS_STAGE:
             'HOST': '/cloudsql/district-stage:us-central1:district-main'
         }
     }
-if IS_STAGE_PROXY:
+elif IS_STAGE_PROXY:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
