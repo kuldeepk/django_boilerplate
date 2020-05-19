@@ -22,14 +22,14 @@ IS_PROD_WORKER = False
 IS_STAGE = False
 IS_STAGE_WORKER = False
 IS_STAGE_PROXY = False
-IS_LOCAL = False
+IS_LOCAL = True
 IS_DEPLOY_WORKER = os.environ.get('CIRCLECI', False) == 'true'
 
 
-# if os.environ.get('GCLOUD_PROJECT') == 'district-so':
-#     IS_PROD = True
-# elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
-#     IS_STAGE = True
+if os.environ.get('GCLOUD_PROJECT') == 'district-so':
+    IS_PROD = True
+elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
+    IS_STAGE = True
 
 if os.environ.get('GCP_PROD_WORKER', False) == 'true':
     IS_PROD = True
@@ -52,10 +52,10 @@ else:
 
 # if IS_PROD:
 #     BASE_URL = 'https://console.getsliver.com'
-# elif IS_STAGE:
-#     BASE_URL = 'https://stage.getsliver.com'
-# else:
-BASE_URL = 'http://0.0.0.0:8001'
+if IS_STAGE:
+    BASE_URL = 'https://stage.district.so'
+else:
+    BASE_URL = 'http://0.0.0.0:8001'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/

@@ -118,8 +118,8 @@ export const WaitlistShareFormPresenter = (
             as="textarea" 
             label="Email addresses"
             hideLabel={true}
-            placeholder="Email addresses"
-            text="Enter comma separated list of email addresses"
+            placeholder="Email addresses of your friends"
+            text="Enter a comma separated list of email addresses"
             submissionErrors={props.submissionErrors} 
             {...formProps} 
           />
