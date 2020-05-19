@@ -94,6 +94,45 @@ export const WaitlistFormPresenter = (
   );
 };
 
+export const WaitlistShareFormPresenter = (
+  props: FormPresenterProps<Partial<WaitlistSchema>>
+) => {
+
+  useEffect(() => {
+    
+  });
+
+
+  return (
+    <Formik
+      initialValues={{
+        
+      }}
+      validationSchema={waitlistSchema}
+      onSubmit={props.handleSubmit}
+      render={formProps => (
+        <Form onSubmit={formProps.handleSubmit} className="mt-5 mb-5">
+          <FormField 
+            name="email" 
+            label="Email addresses" 
+            submissionErrors={props.submissionErrors} 
+            {...formProps} 
+          />
+          <Button variant="primary" type="submit">
+            Share
+          </Button>
+          {(!isEmpty(props.submissionErrors) && !isEmpty(formProps.errors)) && (
+            <GlobalFormErrors
+              submissionErrors={props.submissionErrors}
+              formErrors={formProps.errors}
+            />
+          )}
+        </Form>
+      )}
+    />
+  );
+};
+
 export const WaitlistForm = () => {
   const { setUser } = AppStateContainer.useContainer();
   const [submitted, setSubmitted] = useState(false);
@@ -127,7 +166,27 @@ export const WaitlistForm = () => {
       </>) : (<>
         <h4>Congrats! You reserved your spot at <br/> #{count}</h4>
       </>)}
-      <p>Meantime, please share this with your friends to get an early discount.</p>
+      <p>Meantime, please share this with your friends to reserve a spot for them and get an early discount.</p>
+      <p>
+        <RemoteForm
+          handleSubmit={(info: Partial<WaitlistSchema>) => (
+            axios
+              .post("/api/waitlist/share/", { ...info })
+              .then(response => {
+                
+              })
+              .catch(e => {
+                
+              })
+          )}
+          render={(props) => (
+            <WaitlistShareFormPresenter
+              {...props}
+              initialValues={{}}
+            />
+          )}
+        />
+      </p>
       <p className="share-icons">
         <a target="_blank" href="http://twitter.com/share?text=I just reserved my spot at District.so, a members-only community platform. Reserve yours too! &url=https://district.so"><FontAwesomeIcon className="twitter mr-3" icon={faTwitterSquare} size="3x" /></a>
         <a target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=https://district.so"><FontAwesomeIcon className="linkedin" icon={faLinkedin} size="3x" /></a>

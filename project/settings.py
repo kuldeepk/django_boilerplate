@@ -233,6 +233,119 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'CACHE': not DEBUG,
+        'BUNDLE_DIR_NAME': 'webpack_bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
+
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR,'static')
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
+]
+
+if IS_LOCAL:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_ROOT = os.path.join(BASE_DIR, "files")
+elif IS_STAGE:
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = 'district-stage-upload'
+    GS_PROJECT_ID = 'district-stage'
+elif IS_PROD:
+    DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+    GS_BUCKET_NAME = 'sliver-prod-upload'
+    GS_PROJECT_ID = 'district-so'
+
+import logging
+
+LOGGING = {
+    'version': 1,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(filename)s:%(lineno)d %(funcName)s ' +
+            '%(message)s',
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'basic': {
+            'format': '[%(levelname)s] %(name)s: %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
+        # 'file': {
+        #     'level': 'DEBUG',
+        #     'class': 'logging.FileHandler',
+        #     'filename': '/etc/log/debug.log',
+        # },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+    },
+    'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'django': {
+            'level': 'INFO',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        'synapsepy': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': True,
+        },
+        # 'django.db.backends': { # DB queries
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # },
+        # 'django.request': {
+        #     'handlers': ['mail_admins'],
+        #     'level': 'ERROR',
+        #     'propagate': False,
+        # },
+    }
+}
+
+if IS_DEPLOY_WORKER or IS_LOCAL:
+    DEFAULT_LOGGER = logging.getLogger('django')
+elif IS_STAGE or IS_PROD:
+    import google.cloud.logging
+    client = google.cloud.logging.Client()
+    client.setup_logging()
+    LOGGING['handlers']['stackdriver'] = {
+        'class': 'google.cloud.logging.handlers.CloudLoggingHandler',
+        'client': client,
+        'formatter': 'verbose'
+    }
+    LOGGING['loggers']['stackdriver'] = {
+        'handlers': ['stackdriver'],
+        'level': 'DEBUG',
+        'name': 'prod' if IS_PROD else 'stage'
+    }
+    DEFAULT_LOGGER = logging.getLogger('stackdriver')
+else:
+    DEFAULT_LOGGER = logging.getLogger('django')
+
 GENERAL_ERROR_RESPONSE = "An unknow error occurred. If this persists, please contact support."
 
 
