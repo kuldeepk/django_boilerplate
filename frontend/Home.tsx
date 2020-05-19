@@ -8,7 +8,12 @@ import { Formik } from "formik";
 import { GlobalFormErrors } from "./helpers/GlobalFormErrors";
 import { Container, Row, Col, Form, Button, InputGroup, FormControl } from "react-bootstrap";
 import { get, isEmpty } from "lodash";
-import { WaitlistSchema, waitlistSchema } from "./schema/Waitlist";
+import { 
+  WaitlistSchema, 
+  waitlistSchema,
+  WaitlistShareSchema,
+  waitlistShareSchema,
+} from "./schema/Waitlist";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { 
   faTwitterSquare,
@@ -59,9 +64,7 @@ export const WaitlistFormPresenter = (
 
   return (
     <Formik
-      initialValues={{
-        
-      }}
+      initialValues={props.initialValues}
       validationSchema={waitlistSchema}
       onSubmit={props.handleSubmit}
       render={formProps => (
@@ -95,7 +98,7 @@ export const WaitlistFormPresenter = (
 };
 
 export const WaitlistShareFormPresenter = (
-  props: FormPresenterProps<Partial<WaitlistSchema>>
+  props: FormPresenterProps<Partial<WaitlistShareSchema>>
 ) => {
 
   useEffect(() => {
@@ -105,16 +108,18 @@ export const WaitlistShareFormPresenter = (
 
   return (
     <Formik
-      initialValues={{
-        
-      }}
-      validationSchema={waitlistSchema}
+      initialValues={props.initialValues}
+      validationSchema={waitlistShareSchema}
       onSubmit={props.handleSubmit}
       render={formProps => (
         <Form onSubmit={formProps.handleSubmit} className="mt-5 mb-5">
           <FormField 
-            name="email" 
-            label="Email addresses" 
+            name="emails"
+            as="textarea" 
+            label="Email addresses"
+            hideLabel={true}
+            placeholder="Email addresses"
+            text="Enter comma separated list of email addresses"
             submissionErrors={props.submissionErrors} 
             {...formProps} 
           />
@@ -137,6 +142,7 @@ export const WaitlistForm = () => {
   const { setUser } = AppStateContainer.useContainer();
   const [submitted, setSubmitted] = useState(false);
   const [count, setCount] = useState(0);
+  const [fromEmail, setFromEmail] = useState(null);
 
   return (
     <>
@@ -147,6 +153,7 @@ export const WaitlistForm = () => {
             .post("/api/waitlist/", { ...info })
             .then(response => {
               setCount(response.data.result.count);
+              setFromEmail(response.data.result.email);
               setSubmitted(true);
             })
             .catch(e => {
@@ -166,10 +173,10 @@ export const WaitlistForm = () => {
       </>) : (<>
         <h4>Congrats! You reserved your spot at <br/> #{count}</h4>
       </>)}
-      <p>Meantime, please share this with your friends to reserve a spot for them and get an early discount.</p>
-      <p>
+      <p className="mt-3">Meantime, please share this with your friends to reserve a spot for them and get an early discount.</p>
+      <div>
         <RemoteForm
-          handleSubmit={(info: Partial<WaitlistSchema>) => (
+          handleSubmit={(info: Partial<WaitlistShareSchema>) => (
             axios
               .post("/api/waitlist/share/", { ...info })
               .then(response => {
@@ -182,11 +189,14 @@ export const WaitlistForm = () => {
           render={(props) => (
             <WaitlistShareFormPresenter
               {...props}
-              initialValues={{}}
+              initialValues={{
+                from_email: fromEmail
+              }}
             />
           )}
         />
-      </p>
+      </div>
+      <p>Or</p>
       <p className="share-icons">
         <a target="_blank" href="http://twitter.com/share?text=I just reserved my spot at District.so, a members-only community platform. Reserve yours too! &url=https://district.so"><FontAwesomeIcon className="twitter mr-3" icon={faTwitterSquare} size="3x" /></a>
         <a target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=https://district.so"><FontAwesomeIcon className="linkedin" icon={faLinkedin} size="3x" /></a>

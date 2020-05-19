@@ -14,6 +14,8 @@ class UserProfile(models.Model):
 
 class Waitlist(models.Model):
 	email = models.EmailField(max_length=254, unique=True)
+	confirmed = models.BooleanField(default=True)
+	from_email = models.EmailField(max_length=254, null=True, blank=True)
 
 
 class Invite(models.Model):

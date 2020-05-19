@@ -18,7 +18,7 @@ class UserProfileAdmin(DeleteNotAllowedModelAdmin):
 @admin.register(Waitlist)
 class WaitlistAdmin(admin.ModelAdmin):
     ordering = ['-id']
-    list_display = ('email',)
+    list_display = ('email','confirmed', 'from_email')
 
 
 @admin.register(Invite)

@@ -25,6 +25,8 @@ from two_factor.models import PhoneDevice
 from django.conf import settings
 from django.db import IntegrityError
 
+WAITLIST_KICKSTART = 110
+
 #TODO: penalize on password retry attempts
 
 def get_user_context(user):
@@ -313,7 +315,7 @@ class WaitlistView(APIMixin):
 
     def get(self, request, *args, **kwargs):
         count = Waitlist.objects.count()
-        return JsonResponse({ 'count': 110 + int(count) })
+        return JsonResponse({ 'count': WAITLIST_KICKSTART + int(count) })
     
     @method_decorator(ensure_csrf_cookie)
     def post(self, request, *args, **kwargs):
@@ -321,14 +323,35 @@ class WaitlistView(APIMixin):
         form = WaitlistForm(request_data)
         if form.is_valid():
             try:
-                demo_request = Waitlist.objects.create(email=form.cleaned_data['email'])
+                waitlist_entry = Waitlist.objects.create(email=form.cleaned_data['email'])
             except IntegrityError:
                 return self.error_response(["You are already registered. Thank you for your interest. We will reach back to you shortly."])
             except Exception as e:
                 return self.error_response(["An unknow error occurred. If this persists, please contact support."])
             else:
-                return self.success_response(result={ 'count': 110 + Waitlist.objects.count()  })
+                return self.success_response(result={ 'email': form.cleaned_data['email'], 'count': WAITLIST_KICKSTART + int(waitlist_entry.id)  })
         return self.form_error_response(form)
+
+
+class WaitlistShareView(APIMixin):
+    
+    @method_decorator(ensure_csrf_cookie)
+    def post(self, request, *args, **kwargs):
+        request_data = json.loads(request.body.decode("utf-8"))
+        form = WaitlistShareForm(request_data)
+        if form.is_valid():
+            emails = form.cleaned_data['emails']
+            print(emails)
+            from_email = form.cleaned_data['from_email']
+            for email in emails:
+                try:
+                    demo_request = Waitlist.objects.create(email=email, confirmed=False, from_email=from_email)
+                except IntegrityError:
+                    continue
+                except Exception as e:
+                    return self.error_response(["An unknow error occurred. If this persists, please contact support."])
+            return self.success_response()
+        return self.success_response()
 
 
 class SignupView(APIMixin):
