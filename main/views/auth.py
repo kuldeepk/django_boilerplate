@@ -9,20 +9,11 @@ from django.contrib.auth import (
     logout
 )
 from django.contrib.auth.models import User
-from main.models import Invite, UserProfile
+from main.models import Invite, UserProfile, Waitlist
 from django.shortcuts import redirect, render
 from django.http import JsonResponse, HttpResponse
 import json
-from main.forms.auth import (
-    LoginForm,
-    SignUpForm,
-    ForgotPasswordForm,
-    ResetPasswordForm,
-    AuthenticationDeviceForm,
-    ChangePasswordForm,
-    InvatationSignupForm,
-    InvatationSignupConfirmForm,
-    VerifyEmailForm)
+from main.forms.auth import *
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import EmailMultiAlternatives
@@ -32,6 +23,7 @@ import django_otp
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from two_factor.models import PhoneDevice
 from django.conf import settings
+from django.db import IntegrityError
 
 #TODO: penalize on password retry attempts
 
@@ -315,6 +307,28 @@ class LogoutView(View):
     def get(self, request, *args, **kwargs):
         logout(request)
         return redirect('home')
+
+
+class WaitlistView(APIMixin):
+
+    def get(self, request, *args, **kwargs):
+        count = Waitlist.objects.count()
+        return JsonResponse({ 'count': 110 + int(count) })
+    
+    @method_decorator(ensure_csrf_cookie)
+    def post(self, request, *args, **kwargs):
+        request_data = json.loads(request.body.decode("utf-8"))
+        form = WaitlistForm(request_data)
+        if form.is_valid():
+            try:
+                demo_request = Waitlist.objects.create(email=form.cleaned_data['email'])
+            except IntegrityError:
+                return self.error_response(["You are already registered. Thank you for your interest. We will reach back to you shortly."])
+            except Exception as e:
+                return self.error_response(["An unknow error occurred. If this persists, please contact support."])
+            else:
+                return self.success_response(result={ 'count': 110 + Waitlist.objects.count()  })
+        return self.form_error_response(form)
 
 
 class SignupView(APIMixin):

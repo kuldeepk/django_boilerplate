@@ -14,6 +14,10 @@ class LoginForm(forms.Form, FormMixin):
 	remember = forms.BooleanField(required=False)
 
 
+class WaitlistForm(forms.Form, FormMixin):
+	email = forms.EmailField(max_length=254)
+
+
 class SignUpForm(UserCreationForm, FormMixin):
 	first_name = forms.CharField(max_length=30)
 	last_name = forms.CharField(max_length=150)

@@ -12,11 +12,25 @@ class UserProfile(models.Model):
 		primary_key=True, on_delete=models.PROTECT)
 
 
+class Waitlist(models.Model):
+	email = models.EmailField(max_length=254, unique=True)
+
+
 class Invite(models.Model):
-	invite_code = models.CharField(max_length=255, unique=True)
+	invite_code = models.CharField(max_length=254, unique=True)
 	count = models.IntegerField(default=0, validators=[
 		MinValueValidator(0)
 	])
 
 	def __str__(self):
 		return f"{self.invite_code!r}: {self.count}"
+
+
+try:
+	import reversion
+	reversion.register(User)
+	reversion.register(UserProfile)
+	reversion.register(Waitlist)
+	reversion.register(Invite)
+except:
+	pass

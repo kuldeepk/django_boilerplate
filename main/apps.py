@@ -12,7 +12,9 @@ class SuitConfig(DjangoSuitConfig):
     menu = (
         ParentItem('Users', children=[
             ChildItem(model='auth.user'),
-            ChildItem(model='main.UserProfile'),
+            ChildItem(model='main.invite'),
+            ChildItem(model='main.userprofile'),
+            ChildItem(model='main.waitlist'),
         ], icon='fa fa-users'),
     )
 

@@ -74,8 +74,7 @@ export const LandingNav = () => {
   }
 
   useEffect(() => {
-    console.log(context);
-    events.on('OpenWaitlistBox', handleShow);
+    
   }); 
 
   return (

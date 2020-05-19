@@ -87,6 +87,8 @@ INSTALLED_APPS = [
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    'reversion',
+    'reversion_compare',
 ]
 
 MIDDLEWARE = [
@@ -224,13 +226,13 @@ elif IS_STAGE:
 else:
     STATIC_URL = '/static/'
 
-# if IS_DEPLOY_WORKER:
-STATIC_ROOT = 'static'
+if IS_DEPLOY_WORKER:
+    STATIC_ROOT = 'static'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-GENERAL_ERROR_RESPONSE = "An unknow error occurred. If this persists, please contact Sliver support."
+GENERAL_ERROR_RESPONSE = "An unknow error occurred. If this persists, please contact support."
 
 
