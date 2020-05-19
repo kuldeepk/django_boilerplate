@@ -125,38 +125,38 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if IS_STAGE:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'district_main',
-            'USER': 'postgres',
-            'PASSWORD': get_secret('postgres', {}).get('password'),
-            'HOST': '/cloudsql/district-stage:us-central1:district-main'
-        }
+# if IS_STAGE:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'district_main',
+#             'USER': 'postgres',
+#             'PASSWORD': get_secret('postgres', {}).get('password'),
+#             'HOST': '/cloudsql/district-stage:us-central1:district-main'
+#         }
+#     }
+# elif IS_STAGE_PROXY:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql',
+#             'NAME': 'district_main',
+#             'USER': 'postgres',
+#             'PASSWORD': get_secret('postgres', {}).get('password'),
+#             'HOST': '127.0.0.1',
+#             'PORT': '3311'
+#         }
+#     }
+# else:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('PROJECT_DB', 'project_main'),
+        'USER': os.environ.get('PROJECT_DB_USER', 'user'),
+        'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
+        'HOST': 'postgres',
+        'PORT': 5432,
     }
-elif IS_STAGE_PROXY:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'district_main',
-            'USER': 'postgres',
-            'PASSWORD': get_secret('postgres', {}).get('password'),
-            'HOST': '127.0.0.1',
-            'PORT': '3311'
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('PROJECT_DB', 'project_main'),
-            'USER': os.environ.get('PROJECT_DB_USER', 'user'),
-            'PASSWORD': os.environ.get('PROJECT_DB_PASSWORD', 'password'),
-            'HOST': 'postgres',
-            'PORT': 5432,
-        }
-    }
+}
 
 # Redis
 if IS_LOCAL:
