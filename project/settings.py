@@ -22,7 +22,7 @@ IS_PROD_WORKER = False
 IS_STAGE = False
 IS_STAGE_WORKER = False
 IS_STAGE_PROXY = False
-IS_LOCAL = True
+IS_LOCAL = False
 IS_DEPLOY_WORKER = os.environ.get('CIRCLECI', False) == 'true'
 
 
@@ -176,11 +176,13 @@ SESSION_CACHE_ALIAS = "default"
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600 # in seconds. 60 mins
 SESSION_SAVE_EVERY_REQUEST = True
-if not IS_LOCAL and not IS_DEPLOY_WORKER:
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT = True
+
+# Causes an unknown issue with the deployment
+# if not IS_LOCAL and not IS_DEPLOY_WORKER:
+#     CSRF_COOKIE_SECURE = True
+#     SESSION_COOKIE_SECURE = True
+#     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#     SECURE_SSL_REDIRECT = True
 
 
 # Password validation

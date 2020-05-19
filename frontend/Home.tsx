@@ -143,6 +143,7 @@ export const WaitlistForm = () => {
   const [submitted, setSubmitted] = useState(false);
   const [count, setCount] = useState(0);
   const [fromEmail, setFromEmail] = useState(null);
+  const [shared, setShared] = useState(false);
 
   return (
     <>
@@ -175,15 +176,18 @@ export const WaitlistForm = () => {
       </>)}
       <p className="mt-3">Meantime, please share this with your friends to reserve a spot for them and get an early discount.</p>
       <div>
+        {shared ? (<>
+          <h5>Thank you! We reserved a spot for them.</h5>
+        </>) : (<>
         <RemoteForm
           handleSubmit={(info: Partial<WaitlistShareSchema>) => (
             axios
               .post("/api/waitlist/share/", { ...info })
               .then(response => {
-                
+                setShared(true);
               })
               .catch(e => {
-                
+                setShared(true);
               })
           )}
           render={(props) => (
@@ -195,8 +199,9 @@ export const WaitlistForm = () => {
             />
           )}
         />
+        </>)}
       </div>
-      <p>Or</p>
+      <p>Or share it here</p>
       <p className="share-icons">
         <a target="_blank" href="http://twitter.com/share?text=I just reserved my spot at District.so, a members-only community platform. Reserve yours too! &url=https://district.so"><FontAwesomeIcon className="twitter mr-3" icon={faTwitterSquare} size="3x" /></a>
         <a target="_blank" href="https://www.linkedin.com/sharing/share-offsite/?url=https://district.so"><FontAwesomeIcon className="linkedin" icon={faLinkedin} size="3x" /></a>
