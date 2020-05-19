@@ -132,7 +132,7 @@ if IS_STAGE:
             'NAME': 'district_main',
             'USER': 'postgres',
             'PASSWORD': get_secret('postgres', {}).get('password'),
-            'HOST': '/cloudsql/district-stage:us-central1:district-main/.s.PGSQL.5432'
+            'HOST': '/cloudsql/district-stage:us-central1:district-main'
         }
     }
 elif IS_STAGE_PROXY:
