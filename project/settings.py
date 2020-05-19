@@ -26,10 +26,10 @@ IS_LOCAL = False
 IS_DEPLOY_WORKER = os.environ.get('CIRCLECI', False) == 'true'
 
 
-if os.environ.get('GCLOUD_PROJECT') == 'district-so':
-    IS_PROD = True
-elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
-    IS_STAGE = True
+# if os.environ.get('GCLOUD_PROJECT') == 'district-so':
+#     IS_PROD = True
+# elif os.environ.get('GCLOUD_PROJECT') == 'district-stage':
+#     IS_STAGE = True
 
 if os.environ.get('GCP_PROD_WORKER', False) == 'true':
     IS_PROD = True
