@@ -23,3 +23,11 @@ Spin up base applications from this
 ## Deployment configuration
 
 Configure enviroment variables in your CircleCI. Follow `.circleci/config.yml` for different ENV variables
+
+## Google Cloud APIs to enable
+1. Cloud SQL
+2. Cloud SQL Admin API
+3. App Engine Admin API
+4. Cloud Logging API
+5. Google App Engine Flexible Environment	
+6. Stackdriver API
