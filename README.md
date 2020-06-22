@@ -31,3 +31,10 @@ Configure enviroment variables in your CircleCI. Follow `.circleci/config.yml` f
 4. Cloud Logging API
 5. Google App Engine Flexible Environment	
 6. Stackdriver API
+
+## Google Deployment Service Key needs following access
+1. App Engine Admin
+2. App Engine flexible environment Service Agent
+3. BigQuery Data Editor
+4. Compute OS Admin Login
+5. Storage Object Admin
