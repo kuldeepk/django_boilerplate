@@ -58,7 +58,7 @@
     "formik": "^1.5.7",
     "hookrouter": "1.2.3",
     "js-cookie": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.19",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-bootstrap": "^1.0.0-beta.9",
