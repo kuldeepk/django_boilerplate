@@ -61,6 +61,9 @@ class StatusView(APIMixin):
         else:
             connected = True
 
+        if 1=1:
+            print("here")
+
         redis_connection = False
         # try:
         #     from django_redis import get_redis_connection
